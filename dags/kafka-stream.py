@@ -42,21 +42,47 @@ def stream_data():
     import time
     import logging
     from kafka import KafkaProducer
-    response = get_data()
-    response = format_data(response=response)
-    #print(json.dumps(response, indent=2))
-    producer = KafkaProducer(bootstrap_servers=['localhost:9092'], max_block_ms=5000)
-    current_time = time.time()
-    producer.send('usercreated', json.dumps(response).encode('utf-8'))
 
+
+    #print(json.dumps(response, indent=2))
+    producer = KafkaProducer(bootstrap_servers=['broker:29092'], max_block_ms=5000)
+    current_time = time.time()
+
+    while True:
+        # 30 seconde
+        if time.time() > current_time + 20:
+            break
+
+        try:
+            response = get_data()
+            response = format_data(response=response)
+
+            producer.send('usercreated', json.dumps(response).encode('utf-8'))
+
+        except Exception as e:
+            logging.error(f'error is : {e}')
+            continue
+
+def after_stream_data():
+    print('its ok .........')
 
 with DAG('user_automation',
         default_args=default_args,
-        schedule_interval='@daily',
+        schedule='@daily',
         catchup=False
 
-         ) as dag :
+         ) as dag:
     streaming_task = PythonOperator(
         task_id="stream_data_from_API",
         python_callable=stream_data
     )
+
+    after_streaming_task = PythonOperator(
+        task_id="after_stream_data_task",
+        python_callable=after_stream_data
+    )
+
+    streaming_task >> after_streaming_task
+
+
+#stream_data()
