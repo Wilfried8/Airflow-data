@@ -1,2 +1,5 @@
 apache-airflow
 kafka-python
+pyspark~=3.5.0
+spark
+cassandra-driver~=3.29.0
