@@ -4,7 +4,7 @@ from airflow.operators.python import PythonOperator
 
 default_args = {
     'owner': 'wilfried',
-    'start_date': datetime(2024, 2, 10, 00)
+    'start_date': datetime(2024, 2, 13, 00)
 }
 
 
@@ -51,7 +51,7 @@ def stream_data():
     current_time = time.time()
 
     while True:
-        # 30 seconde
+
         if time.time() > current_time + 60:
             break
 
@@ -68,7 +68,7 @@ def stream_data():
 
 with DAG('user_automation',
          default_args=default_args,
-         schedule_interval='@daily',
+         schedule='@daily',
          catchup=False
          ) as dag:
     streaming_task = PythonOperator(

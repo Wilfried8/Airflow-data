@@ -13,7 +13,7 @@ def create_keyspace(session):
         WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'};
     """)
 
-    print("Keyspace created successfully!")
+    print("Keyspace created successfully!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
 def create_table(session):
@@ -33,7 +33,7 @@ def create_table(session):
         picture TEXT);
     """)
 
-    print("Table created successfully!")
+    print("Table created successfully!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
 def insert_data(session, **kwargs):
@@ -72,12 +72,12 @@ def create_spark_connection():
     try:
         session_connection = SparkSession.builder \
             .appName("StreamDataFromKafkaToSpark") \
-            .config('spark.jars.packages', "com.datastax.spark:spark-cassandra-connector_2.13:3.4.1,"
-                                           "org.apache.spark:spark-sql-kafka-0-10_2.13:3.4.1") \
             .config('spark.cassandra.connection.host', 'localhost') \
+            .config('spark.jars.packages', "com.datastax.spark:spark-cassandra-connector_2.13:3.4.1,"
+                                           "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0") \
             .getOrCreate()
         session_connection.sparkContext.setLogLevel("ERROR")
-        logging.info("Spark connection created successfully!")
+        logging.info("Spark connection created successfully!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
     except Exception as e:
         logging.error(f"couldn't create a spark session due to exception : {e}")
@@ -136,7 +136,7 @@ def create_selected_dataFrame_from_kafka(spark_df):
 
     selection_data = spark_df.selectExpr("CAST(value AS STRING)") \
         .select(from_json(col('value'), schema=schema).alias('data')).select("data.*")
-    print(selection_data)
+    print(selection_data["first_name"][0])
 
     return selection_data
 
